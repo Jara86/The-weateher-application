@@ -1,3 +1,5 @@
 body {
-   background-color:  linear-gradient(to top, #ebc0fd 0%, #d9ded8 100%);
+    background-image: url("freepik__candid-image-photography-natural-textures-highly-r__52223.jpeg");
+    background-size: cover; 
+    background-repeat: no-repeat;
 }
