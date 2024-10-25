@@ -1,52 +1,63 @@
 
-const apikey = "a957a90b9a361bae582473445e32cf79";
-
-function searchCity(city) {
-    getCurrentTemperature(city);
-}
-
-function getCurrentTemperature(cityName) {
-    const options = {
-        method: "GET",
-        url: `https://api.weatherstack.com/current?access_key=${apikey}&query=${cityName}`, 
-    };
-
-    axios(options)
-        .then(response => {
-            const data = response.data;
-            updateWeatherUI(data);
-        })
-        .catch(error => {
-            console.error("Error fetching the weather data", error);
-            document.querySelector('#city').innerHTML = "City not found";
-        });
-}
-
-function updateWeatherUI(data) {
-    const cityElement = document.querySelector('#city');
-    const temperatureElement = document.querySelector('.weather-app-temperature');
-    const detailsElement = document.querySelector('.weather-app-details');
-    const iconElement = document.querySelector('.weather-app-icon');
+function refreshWeather(response) {
+    let temperatureElement = document.querySelector("#temperature");
+    let temperature = response.data.temperature.current;
+    let cityElement = document.querySelector("#city");
+    let descriptionElement = document.querySelector("#description");
+    let humidityElement = document.querySelector("#humidity");
+    let windSpeedElement = document.querySelector("#wind-speed");
+    let timeElement = document.querySelector("#time");
+    let date = new Date(response.data.time * 1000);
+    let iconElement = document.querySelector("#icon");
   
-    cityElement.innerHTML = data.location.name;
-    temperatureElement.innerHTML = `${data.current.temperature}°C`;
+    cityElement.innerHTML = response.data.city;
+    timeElement.innerHTML = formatDate(date);
+    descriptionElement.innerHTML = response.data.condition.description;
+    humidityElement.innerHTML = `${response.data.temperature.humidity}%`;
+    windSpeedElement.innerHTML = `${response.data.wind.speed}km/h`;
+    temperatureElement.innerHTML = Math.round(temperature);
+    iconElement.innerHTML = `<img src="${response.data.condition.icon_url}" class="weather-app-icon" />`;
+  }
   
-    detailsElement.innerHTML = `${data.location.localtime}, ${data.current.weather_descriptions[0]} <br />
-    Humidity: <strong>${data.current.humidity}%</strong>, Wind: <strong>${data.current.wind_speed} km/h</strong>`;
+  function formatDate(date) {
+    let minutes = date.getMinutes();
+    let hours = date.getHours();
+    let days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    let day = days[date.getDay()];
   
-   
-    const iconUrl = data.current.weather_icons[0]; 
-    iconElement.innerHTML = `<img src="${iconUrl}" alt="Weather icon" />`;
-}
-
-function handleSearchSubmit(event) {
+    if (minutes < 10) {
+      minutes = `0${minutes}`;
+    }
+  
+    return `${day} ${hours}:${minutes}`;
+  }
+  
+  function searchCity(city) {
+    let apiKey = "ta004a4a3b736802do35c5853a06aff7";
+    let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}`;
+    axios.get(apiUrl).then(refreshWeather);
+  }
+  
+  function handleSearchSubmit(event) {
     event.preventDefault();
-    let searchInput = document.querySelector('#search-form-input');
-    let cityElement = document.querySelector('#city');
-    cityElement.innerHTML = searchInput.value;
-
+    let searchInput = document.querySelector("#search-form-input");
+  
     searchCity(searchInput.value);
-}
-
-let searchFormElement = document.querySelector('#search-form');
-searchFormElement.addEventListener("submit", handleSearchSubmit);
+  }
+  
+  function displayForecast() {
+  }
+  
+  let searchFormElement = document.querySelector("#search-form");
+  searchFormElement.addEventListener("submit", handleSearchSubmit);
+  
+  searchCity("Paris");
+  displayForecast();
