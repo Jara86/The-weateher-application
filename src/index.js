@@ -18,7 +18,7 @@ function getCurrentTemperature(city) {
             const iconElement = document.querySelector('.weather-app-icon');
 
             cityElement.innerHTML = data.city;
-            temperatureElement.innerHTML = `${data.temperature.current}°C`;
+            temperatureElement.innerHTML = `${Math.round(data.temperature.current)}`;
             detailsElement.innerHTML = `${data.time}, ${data.condition.description}<br />
                 Humidity: <strong>${data.temperature.humidity}%</strong>, Wind: <strong>${data.wind.speed} km/h</strong>`;
 
